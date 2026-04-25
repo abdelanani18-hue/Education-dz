@@ -4,373 +4,525 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>نجوم الجزائر</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --g:#1a7a4a;--gl:#e8f5ee;--gm:#2d9b60;--gd:#0a4d2e;
-  --gold:#d4a017;--bg:#f4f6f8;--white:#fff;
-  --text:#1a1a2e;--muted:#6b7280;--border:#e5e7eb;
-  --r:12px;--rs:8px;--sh:0 2px 12px rgba(0,0,0,.08)
+  --g:#16a34a;--gl:#f0fdf4;--gm:#22c55e;--gd:#14532d;--g2:#15803d;
+  --gold:#f59e0b;--bg:#f8fafc;--white:#fff;
+  --text:#0f172a;--muted:#64748b;--border:#e2e8f0;--border2:#cbd5e1;
+  --r:14px;--rs:10px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow:0 4px 16px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.04);
+  --shadow-lg:0 10px 40px rgba(0,0,0,.1),0 4px 12px rgba(0,0,0,.06)
 }
-body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-a{text-decoration:none}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
 
-/* NAV */
-nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:62px;position:sticky;top:0;z-index:200;box-shadow:var(--sh)}
-.logo{display:flex;align-items:center;gap:9px;cursor:pointer}
-.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--g),var(--gm));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px}
-.logo-text{font-size:17px;font-weight:800;color:var(--g)}
-.logo-sub{font-size:10px;color:var(--muted)}
-.nav-links{display:flex;gap:4px}
-.nav-link{padding:7px 14px;border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);border:none;background:none;font-family:'Cairo',sans-serif;transition:.2s}
-.nav-link:hover,.nav-link.active{background:var(--gl);color:var(--g)}
-.nav-cta{background:var(--g);color:#fff;padding:8px 18px;border-radius:var(--rs);font-size:13px;font-weight:700;border:none;cursor:pointer;font-family:'Cairo',sans-serif;display:flex;align-items:center;gap:6px}
+/* LAYOUT */
+.app-shell{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:230px;background:var(--white);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sidebar-logo{padding:1.4rem 1.2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-mark{width:38px;height:38px;background:linear-gradient(135deg,#16a34a,#22c55e);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-mark svg{width:20px;height:20px;fill:#fff}
+.logo-text{font-size:16px;font-weight:800;color:var(--g);line-height:1.1}
+.logo-sub{font-size:10px;color:var(--muted);font-weight:500}
+.sidebar-section{padding:.5rem .8rem;margin-top:.4rem}
+.sidebar-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;padding:.4rem .6rem .2rem}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--rs);cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);transition:all .15s;margin-bottom:2px;border:none;background:none;width:100%;text-align:right;font-family:'Cairo',sans-serif}
+.nav-item:hover{background:#f1f5f9;color:var(--text)}
+.nav-item.active{background:var(--gl);color:var(--g)}
+.nav-item .ni-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:#f1f5f9;transition:.15s}
+.nav-item.active .ni-icon{background:#dcfce7}
+.nav-item .ni-badge{margin-right:auto;background:#f1f5f9;color:var(--muted);font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700}
+.nav-item.active .ni-badge{background:#dcfce7;color:var(--g)}
+.sidebar-divider{height:1px;background:var(--border);margin:.6rem .8rem}
+.sidebar-footer{margin-top:auto;padding:1rem;border-top:1px solid var(--border)}
+.ai-status{display:flex;align-items:center;gap:8px;padding:.7rem 1rem;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:var(--rs);border:1px solid #bbf7d0}
+.ai-pulse{width:8px;height:8px;background:#16a34a;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+
+/* TOPBAR */
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:.6rem}
+.topbar-title{font-size:16px;font-weight:800;color:var(--text)}
+.topbar-sub{font-size:12px;color:var(--muted)}
+.topbar-right{display:flex;align-items:center;gap:.6rem}
+.tb-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--rs);font-size:13px;font-weight:700;border:none;cursor:pointer;font-family:'Cairo',sans-serif;transition:.15s}
+.tb-btn-ghost{background:var(--bg);color:var(--text);border:1px solid var(--border)}
+.tb-btn-ghost:hover{background:#f1f5f9;border-color:var(--border2)}
+.tb-btn-primary{background:var(--g);color:#fff}
+.tb-btn-primary:hover{background:var(--g2)}
+.tb-badge{background:#dcfce7;color:#166534;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px}
 
 /* PAGES */
-.page{display:none}.page.active{display:block}
+.page{display:none;flex:1}.page.active{display:flex;flex-direction:column}
 
-/* HERO */
-.hero{background:linear-gradient(140deg,#062b1a 0%,#0f5c32 45%,#1a7a4a 100%);color:#fff;padding:3.5rem 2rem;text-align:center;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:5px 14px;font-size:12px;margin-bottom:1.2rem}
-.hero h1{font-size:2.6rem;font-weight:800;margin-bottom:.8rem;line-height:1.3;position:relative;z-index:1}
-.hero h1 span{color:#ffd700}
-.hero p{font-size:1rem;opacity:.88;max-width:560px;margin:0 auto 1.8rem;line-height:1.9;position:relative;z-index:1}
-.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
-.btn-hero{background:#fff;color:var(--g);padding:13px 28px;border-radius:var(--r);font-size:14px;font-weight:800;border:none;cursor:pointer;font-family:'Cairo',sans-serif;transition:.2s}
-.btn-hero:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.25)}
-.btn-ghost{background:transparent;color:#fff;padding:12px 24px;border-radius:var(--r);font-size:14px;font-weight:600;border:2px solid rgba(255,255,255,.4);cursor:pointer;font-family:'Cairo',sans-serif;transition:.2s}
-.btn-ghost:hover{background:rgba(255,255,255,.1)}
-.hero-stats{display:flex;gap:2rem;justify-content:center;margin-top:2.5rem;flex-wrap:wrap;position:relative;z-index:1}
-.stat-num{font-size:1.9rem;font-weight:800;color:#ffd700}
-.stat-label{font-size:12px;opacity:.8}
+/* HOME */
+.home-hero{background:linear-gradient(145deg,#052e16 0%,#14532d 40%,#166534 70%,#16a34a 100%);padding:2.8rem 2rem;color:#fff;position:relative;overflow:hidden}
+.home-hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 20% 80%,rgba(255,255,255,.04) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(255,255,255,.06) 0%,transparent 50%);pointer-events:none}
+.hero-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;margin-bottom:1.2rem}
+.hero-chip span{width:6px;height:6px;background:#4ade80;border-radius:50%;display:inline-block}
+.hero h1{font-size:2.2rem;font-weight:900;line-height:1.25;margin-bottom:.7rem;position:relative;z-index:1}
+.hero h1 em{font-style:normal;color:#86efac}
+.hero p{font-size:13px;opacity:.85;max-width:500px;line-height:1.9;margin-bottom:1.6rem;position:relative;z-index:1}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:1}
+.ha-primary{background:#fff;color:#16a34a;padding:11px 22px;border-radius:var(--r);font-size:13px;font-weight:800;border:none;cursor:pointer;font-family:'Cairo',sans-serif;transition:.2s}
+.ha-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.ha-outline{background:transparent;color:#fff;padding:10px 20px;border-radius:var(--r);font-size:13px;font-weight:600;border:1.5px solid rgba(255,255,255,.35);cursor:pointer;font-family:'Cairo',sans-serif;transition:.2s}
+.ha-outline:hover{background:rgba(255,255,255,.08)}
+.hero-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:2rem;position:relative;z-index:1}
+.kpi{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:var(--r);padding:1rem;text-align:center;backdrop-filter:blur(10px)}
+.kpi-num{font-size:1.8rem;font-weight:900;color:#fbbf24;line-height:1}
+.kpi-lbl{font-size:11px;opacity:.75;margin-top:4px}
 
-/* SECTIONS */
-.section{padding:2.5rem 1.5rem;max-width:1100px;margin:0 auto}
-.sec-title{font-size:1.6rem;font-weight:800;text-align:center;margin-bottom:.4rem}
-.sec-sub{color:var(--muted);text-align:center;margin-bottom:2rem;font-size:14px}
+/* STAT STRIP */
+.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid var(--border)}
+.ss-item{padding:1rem 1.2rem;text-align:center;border-left:1px solid var(--border);background:var(--white)}
+.ss-item:last-child{border-left:none}
+.ss-val{font-size:1.5rem;font-weight:800;color:var(--g)}
+.ss-lbl{font-size:11px;color:var(--muted);margin-top:2px}
 
-/* YEAR CARDS */
-.years-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
-.year-card{background:var(--white);border-radius:var(--r);padding:1.4rem;text-align:center;cursor:pointer;border:2px solid var(--border);transition:.25s;position:relative;overflow:hidden}
-.year-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--g),var(--gm))}
-.year-card:hover{border-color:var(--g);transform:translateY(-3px);box-shadow:0 10px 28px rgba(26,122,74,.15)}
-.year-icon{font-size:2.4rem;margin-bottom:.6rem}
-.year-label{font-size:15px;font-weight:700}
-.year-count{font-size:11px;color:var(--muted);margin-top:3px}
+/* CONTENT AREA */
+.content-area{padding:1.5rem;flex:1}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.sh-title{font-size:15px;font-weight:800}
+.sh-sub{font-size:12px;color:var(--muted);margin-top:1px}
+.sh-link{font-size:12px;color:var(--g);font-weight:600;cursor:pointer;border:none;background:none;font-family:'Cairo',sans-serif}
+
+/* YEARS */
+.years-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:1.5rem}
+.yr-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.2rem;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.yr-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--g),var(--gm));transform:scaleX(0);transition:.2s;transform-origin:right}
+.yr-card:hover{border-color:#86efac;box-shadow:var(--shadow);transform:translateY(-2px)}
+.yr-card:hover::after{transform:scaleX(1)}
+.yr-emoji{font-size:2rem;margin-bottom:.6rem;display:block}
+.yr-name{font-size:13px;font-weight:700}
+.yr-count{font-size:11px;color:var(--muted);margin-top:3px}
 
 /* FEATURES */
-.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-.feat-card{background:var(--white);border-radius:var(--r);padding:1.4rem;border:1px solid var(--border);transition:.2s}
-.feat-card:hover{box-shadow:var(--sh)}
-.feat-icon{width:44px;height:44px;border-radius:10px;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:.9rem}
-.feat-title{font-size:14px;font-weight:700;margin-bottom:.4rem}
-.feat-desc{font-size:12px;color:var(--muted);line-height:1.7}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.fc{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.2rem;transition:.2s}
+.fc:hover{box-shadow:var(--shadow);border-color:var(--border2)}
+.fc-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:.8rem}
+.fc-title{font-size:13px;font-weight:700;margin-bottom:.3rem}
+.fc-desc{font-size:11px;color:var(--muted);line-height:1.7}
+
+/* RECENT */
+.recent-list{display:flex;flex-direction:column;gap:8px}
+.rl-item{background:var(--white);border:1px solid var(--border);border-radius:var(--rs);padding:.8rem 1rem;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.15s}
+.rl-item:hover{border-color:var(--border2);box-shadow:var(--shadow-sm)}
+.rl-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.rl-name{font-size:13px;font-weight:600;flex:1}
+.rl-meta{font-size:11px;color:var(--muted)}
+.rl-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px}
 
 /* GENERATOR */
-.gen-wrap{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start;padding:1.5rem}
-.gen-box{background:var(--white);border-radius:var(--r);border:1px solid var(--border);overflow:hidden}
-.gen-head{background:linear-gradient(90deg,var(--gd),var(--g));color:#fff;padding:1.1rem 1.4rem;display:flex;align-items:center;gap:8px}
-.gen-head h3{font-size:15px;font-weight:700}
-.gen-body{padding:1.4rem}
-.steps{display:flex;border-radius:var(--rs);overflow:hidden;border:1px solid var(--border);margin-bottom:1.4rem}
-.step{flex:1;padding:10px 6px;text-align:center;font-size:12px;font-weight:700;cursor:pointer;background:var(--bg);transition:.2s;border-left:1px solid var(--border)}
-.step:last-child{border-left:none}
-.step.active{background:var(--g);color:#fff}
-.step.done{background:var(--gl);color:var(--g)}
-.step-num{display:block;font-size:10px;font-weight:400;opacity:.7;margin-bottom:1px}
-label.lbl{display:block;font-size:13px;font-weight:700;margin-bottom:.4rem}
-select.sel,input.inp{width:100%;padding:9px 12px;border-radius:var(--rs);border:1.5px solid var(--border);font-family:'Cairo',sans-serif;font-size:13px;background:var(--white);color:var(--text);outline:none;transition:.2s;direction:rtl;margin-bottom:1rem}
-select.sel:focus,input.inp:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(26,122,74,.1)}
-.gbtn{background:var(--g);color:#fff;padding:11px;border-radius:var(--rs);font-size:14px;font-weight:700;border:none;cursor:pointer;font-family:'Cairo',sans-serif;width:100%;transition:.2s}
-.gbtn:hover{background:#155a38}
-.gbtn:disabled{opacity:.5;cursor:not-allowed}
-.gbtn-ghost{background:none;border:none;color:var(--muted);font-family:'Cairo',sans-serif;font-size:12px;cursor:pointer;width:100%;padding:8px;margin-top:6px}
-
-/* AI CHAT */
-.ai-section{background:var(--white);border-radius:var(--r);border:1px solid var(--border);overflow:hidden}
-.ai-head{background:linear-gradient(90deg,#1a1a2e,#2d2d5e);color:#fff;padding:1rem 1.4rem;display:flex;align-items:center;justify-content:space-between}
-.ai-head h3{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
-.ai-dot{width:8px;height:8px;background:#4ade80;border-radius:50%;animation:blink 1.4s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.ai-messages{padding:1rem;min-height:200px;max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
-.msg{max-width:88%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.7}
-.msg-ai{background:var(--gl);color:var(--text);align-self:flex-start;border-radius:4px 12px 12px 12px}
-.msg-user{background:var(--g);color:#fff;align-self:flex-end;border-radius:12px 4px 12px 12px}
-.msg-loading{display:flex;gap:4px;align-items:center;padding:12px 16px}
-.dot{width:7px;height:7px;background:var(--g);border-radius:50%;animation:bounce .9s infinite}
-.dot:nth-child(2){animation-delay:.2s}
-.dot:nth-child(3){animation-delay:.4s}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-.ai-input-row{display:flex;gap:8px;padding:10px 1rem;border-top:1px solid var(--border)}
-.ai-inp{flex:1;padding:9px 12px;border-radius:var(--rs);border:1.5px solid var(--border);font-family:'Cairo',sans-serif;font-size:13px;outline:none;direction:rtl}
-.ai-inp:focus{border-color:var(--g)}
-.ai-send{background:var(--g);color:#fff;border:none;border-radius:var(--rs);padding:9px 16px;cursor:pointer;font-size:16px;transition:.2s}
-.ai-send:hover{background:#155a38}
-.ai-send:disabled{opacity:.4;cursor:not-allowed}
-
-/* Q BANK */
-.q-item{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rs);padding:.9rem 1.1rem;margin-bottom:9px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:.2s}
-.q-item:hover{border-color:var(--gm)}
-.q-item.sel{border-color:var(--g);background:var(--gl)}
-.q-chk{width:19px;height:19px;border-radius:5px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:11px;transition:.2s}
-.q-item.sel .q-chk{background:var(--g);border-color:var(--g);color:#fff}
-.q-txt{font-size:13px;line-height:1.7;flex:1}
-.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
-.badge{font-size:10px;padding:2px 9px;border-radius:20px;font-weight:600}
-.b-e{background:#dcfce7;color:#166534}.b-m{background:#fef9c3;color:#854d0e}.b-h{background:#fee2e2;color:#991b1b}.b-t{background:#ede9fe;color:#5b21b6}.b-p{background:#e0f2fe;color:#0369a1}
+.gen-layout{display:grid;grid-template-columns:300px 1fr;gap:16px;padding:1.5rem;align-items:start;flex:1}
+.panel{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.panel-head{padding:.9rem 1.2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.panel-head-title{font-size:14px;font-weight:800}
+.panel-head-badge{font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--gl);color:var(--g)}
+.panel-body{padding:1.2rem}
+.stepper{display:flex;gap:0;margin-bottom:1.2rem;border:1px solid var(--border);border-radius:var(--rs);overflow:hidden}
+.step-btn{flex:1;padding:8px 4px;text-align:center;font-size:11px;font-weight:700;cursor:pointer;background:var(--bg);border:none;font-family:'Cairo',sans-serif;transition:.15s;position:relative;color:var(--muted)}
+.step-btn+.step-btn{border-right:1px solid var(--border)}
+.step-btn .sn{display:block;font-size:9px;font-weight:500;opacity:.7;margin-bottom:1px}
+.step-btn.active{background:var(--g);color:#fff}
+.step-btn.done{background:#dcfce7;color:var(--g)}
+lbl{display:block;font-size:12px;font-weight:700;color:var(--text);margin-bottom:.3rem}
+.field{margin-bottom:.9rem}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--text);margin-bottom:.3rem}
+select.fsel,input.finp{width:100%;padding:8px 11px;border-radius:var(--rs);border:1.5px solid var(--border);font-family:'Cairo',sans-serif;font-size:13px;background:var(--white);color:var(--text);outline:none;transition:.2s;direction:rtl}
+select.fsel:focus,input.finp:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(22,163,74,.08)}
+.btn-full{width:100%;padding:10px;border-radius:var(--rs);font-size:13px;font-weight:700;border:none;cursor:pointer;font-family:'Cairo',sans-serif;transition:.15s;display:flex;align-items:center;justify-content:center;gap:7px}
+.btn-green{background:var(--g);color:#fff}.btn-green:hover{background:var(--g2)}
+.btn-dark{background:#1e293b;color:#fff}.btn-dark:hover{background:#0f172a}
+.btn-ghost-sm{background:none;border:none;color:var(--muted);font-family:'Cairo',sans-serif;font-size:12px;cursor:pointer;width:100%;padding:7px;margin-top:4px}
+.btn-ghost-sm:hover{color:var(--text)}
+.q-card{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rs);padding:.8rem;margin-bottom:8px;display:flex;gap:9px;cursor:pointer;transition:.15s}
+.q-card:hover{border-color:#86efac}
+.q-card.sel{border-color:var(--g);background:#f0fdf4}
+.q-chk{width:18px;height:18px;border-radius:5px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:10px;transition:.15s}
+.q-card.sel .q-chk{background:var(--g);border-color:var(--g);color:#fff}
+.q-text{font-size:12.5px;line-height:1.7;flex:1}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.tag{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
+.t-easy{background:#dcfce7;color:#166534}.t-med{background:#fef9c3;color:#854d0e}.t-hard{background:#fee2e2;color:#991b1b}
+.t-type{background:#ede9fe;color:#5b21b6}.t-pts{background:#e0f2fe;color:#0369a1}
 
 /* PREVIEW */
-.preview-wrap{background:var(--white);border-radius:var(--r);border:1px solid var(--border);overflow:hidden}
-.preview-top{background:var(--bg);border-bottom:1px solid var(--border);padding:.8rem 1.2rem;display:flex;align-items:center;justify-content:space-between}
-.preview-top span{font-size:13px;font-weight:600;color:var(--muted)}
-.pdf-btn{background:var(--g);color:#fff;padding:8px 18px;border-radius:var(--rs);font-size:13px;font-weight:700;border:none;cursor:pointer;font-family:'Cairo',sans-serif;display:flex;align-items:center;gap:6px}
-.pdf-btn:disabled{opacity:.4;cursor:not-allowed}
-#preview-body{padding:1.5rem;direction:rtl;min-height:300px}
-.exam-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px double var(--g);padding-bottom:1rem;margin-bottom:1.2rem}
-.exam-school{font-size:12px;color:var(--muted);line-height:1.8}
-.exam-center{text-align:center}
-.exam-title-ar{font-size:17px;font-weight:800;color:var(--g)}
-.exam-subtitle{font-size:12px;color:var(--muted);margin-top:3px}
-.exam-meta-row{display:flex;gap:1.5rem;justify-content:center;font-size:12px;color:var(--muted);margin-bottom:1.2rem;flex-wrap:wrap;padding:.6rem;background:var(--bg);border-radius:var(--rs)}
-.exam-q{margin-bottom:1.1rem;padding-bottom:1.1rem;border-bottom:1px dashed var(--border)}
-.q-header{display:flex;align-items:center;gap:6px;margin-bottom:.4rem}
-.q-num-circle{width:22px;height:22px;border-radius:50%;background:var(--g);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.answer-space{border:1px dashed var(--border);border-radius:6px;height:52px;margin-top:.6rem;background:repeating-linear-gradient(transparent,transparent 24px,#e5e7eb 24px,#e5e7eb 25px)}
-.empty-preview{text-align:center;padding:3rem;color:var(--muted)}
+.preview-area{display:flex;flex-direction:column;gap:12px}
+.preview-panel{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.preview-toolbar{padding:.7rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg)}
+.preview-body{padding:1.5rem;direction:rtl;min-height:400px}
+.exam-hdr{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;border-bottom:2px solid var(--g);padding-bottom:1rem;margin-bottom:1rem;align-items:center}
+.eh-cell{font-size:11.5px;color:var(--muted);line-height:1.9}
+.eh-center{text-align:center}
+.eh-title{font-size:16px;font-weight:800;color:var(--g)}
+.eh-sub{font-size:11px;color:var(--muted)}
+.exam-info{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;background:#f8fafc;border-radius:var(--rs);padding:.6rem;font-size:12px;color:var(--muted);margin-bottom:1rem}
+.exam-q{margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px dashed var(--border)}
+.eq-head{display:flex;align-items:center;gap:7px;margin-bottom:.4rem}
+.eq-num{width:22px;height:22px;background:var(--g);color:#fff;border-radius:50%;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.eq-label{font-size:12px;font-weight:700}
+.eq-pts{font-size:11px;color:var(--muted)}
+.eq-text{font-size:12.5px;line-height:1.85;padding-right:28px}
+.ans-lines{margin-top:.5rem;display:flex;flex-direction:column;gap:10px}
+.ans-line{border-bottom:1px solid #e2e8f0;height:1px;width:100%}
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.empty-state .es-icon{font-size:3rem;margin-bottom:.8rem}
+.empty-state .es-title{font-size:14px;font-weight:600;margin-bottom:.3rem;color:var(--text)}
+.empty-state .es-sub{font-size:12px}
+
+/* AI MINI */
+.ai-mini{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.ai-head{padding:.8rem 1rem;background:linear-gradient(90deg,#0f172a,#1e293b);color:#fff;display:flex;align-items:center;justify-content:space-between}
+.ai-head-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px}
+.ai-head-sub{font-size:11px;opacity:.6}
+.ai-msgs{padding:.8rem;min-height:160px;max-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.m{max-width:90%;padding:9px 13px;border-radius:12px;font-size:12.5px;line-height:1.7}
+.m-ai{background:var(--gl);border:1px solid #bbf7d0;align-self:flex-start;border-radius:4px 12px 12px 12px;color:var(--text)}
+.m-user{background:var(--g);color:#fff;align-self:flex-end;border-radius:12px 4px 12px 12px}
+.m-loading{display:flex;gap:4px;align-items:center;padding:10px 14px;background:var(--gl);border-radius:4px 12px 12px 12px;border:1px solid #bbf7d0}
+.ld{width:6px;height:6px;background:var(--g);border-radius:50%;animation:ld .8s infinite}
+.ld:nth-child(2){animation-delay:.15s}.ld:nth-child(3){animation-delay:.3s}
+@keyframes ld{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.ai-inp-row{display:flex;gap:7px;padding:.7rem .8rem;border-top:1px solid var(--border)}
+.ai-text-inp{flex:1;padding:8px 11px;border-radius:var(--rs);border:1.5px solid var(--border);font-family:'Cairo',sans-serif;font-size:12.5px;outline:none;direction:rtl;background:var(--bg)}
+.ai-text-inp:focus{border-color:var(--g)}
+.ai-send-btn{background:var(--g);color:#fff;border:none;border-radius:var(--rs);padding:8px 14px;cursor:pointer;font-size:15px;transition:.15s}
+.ai-send-btn:hover{background:var(--g2)}.ai-send-btn:disabled{opacity:.4;cursor:not-allowed}
 
 /* LIBRARY */
-.lib-wrap{padding:1.5rem}
-.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.2rem;align-items:center}
-.filter-bar input{flex:1;min-width:180px;padding:9px 14px;border-radius:var(--rs);border:1.5px solid var(--border);font-family:'Cairo',sans-serif;font-size:13px;outline:none;direction:rtl}
-.filter-bar input:focus{border-color:var(--g)}
-.ftab{padding:8px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--muted);font-family:'Cairo',sans-serif;transition:.2s}
-.ftab.active{background:var(--g);color:#fff;border-color:var(--g)}
-.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
-.doc-card{background:var(--white);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:.25s}
-.doc-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.1);transform:translateY(-2px)}
-.doc-thumb{height:110px;display:flex;align-items:center;justify-content:center;font-size:2.8rem;position:relative}
-.doc-type-badge{position:absolute;top:8px;right:8px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px}
-.doc-info{padding:.9rem}
-.doc-name{font-size:13px;font-weight:700;margin-bottom:3px}
+.lib-topbar{padding:1rem 1.5rem;border-bottom:1px solid var(--border);background:var(--white);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.search-box{display:flex;align-items:center;gap:7px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rs);padding:7px 12px;flex:1;min-width:200px}
+.search-box input{border:none;outline:none;background:none;font-family:'Cairo',sans-serif;font-size:13px;flex:1;direction:rtl;color:var(--text)}
+.filter-chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--muted);font-family:'Cairo',sans-serif;transition:.15s}
+.filter-chip:hover{border-color:var(--border2);color:var(--text)}
+.filter-chip.active{background:var(--g);color:#fff;border-color:var(--g)}
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;padding:1.5rem}
+.doc-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:.2s}
+.doc-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.doc-thumb{height:100px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;position:relative}
+.doc-type{position:absolute;top:8px;right:8px;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--g);color:#fff}
+.doc-info{padding:.8rem}
+.doc-name{font-size:12.5px;font-weight:700;margin-bottom:2px;line-height:1.4}
 .doc-meta{font-size:11px;color:var(--muted)}
-.doc-actions{display:flex;gap:7px;margin-top:.7rem}
-.btn-sm{padding:6px 13px;border-radius:6px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:'Cairo',sans-serif;transition:.2s}
-.btn-dl{background:var(--gl);color:var(--g)}.btn-dl:hover{background:#c6e8d5}
-.btn-view{background:var(--bg);color:var(--text);border:1px solid var(--border)!important;border:none}.btn-view:hover{background:#e5e7eb}
+.doc-btns{display:flex;gap:6px;margin-top:.6rem}
+.d-btn{padding:5px 11px;border-radius:6px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:'Cairo',sans-serif;transition:.15s}
+.d-dl{background:var(--gl);color:var(--g)}.d-dl:hover{background:#bbf7d0}
+.d-view{background:var(--bg);color:var(--text);border:1px solid var(--border)!important;border:none}.d-view:hover{background:#e2e8f0}
 
-/* STATS BAR */
-.stats-bar{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;gap:2rem;justify-content:center;flex-wrap:wrap}
-.sbar-item{text-align:center}
-.sbar-num{font-size:1.5rem;font-weight:800;color:var(--g)}
-.sbar-label{font-size:11px;color:var(--muted)}
+/* AI PAGE */
+.ai-page-wrap{display:flex;gap:16px;padding:1.5rem;flex:1;align-items:start}
+.ai-sidebar-panel{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:12px}
+.ai-main-panel{flex:1;display:flex;flex-direction:column}
+.quick-prompts{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.qp-head{padding:.8rem 1rem;border-bottom:1px solid var(--border);font-size:12px;font-weight:700}
+.qp-list{padding:.5rem}
+.qp-btn{display:block;width:100%;text-align:right;padding:8px 10px;border-radius:var(--rs);font-size:11.5px;font-weight:600;color:var(--muted);cursor:pointer;border:none;background:none;font-family:'Cairo',sans-serif;transition:.15s;line-height:1.5}
+.qp-btn:hover{background:var(--gl);color:var(--g)}
+.ai-full{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+.af-head{padding:1rem 1.2rem;background:linear-gradient(90deg,#0f172a,#1e293b);color:#fff;display:flex;align-items:center;justify-content:space-between}
+.af-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.af-clear{background:rgba(255,255,255,.12);border:none;color:#fff;padding:5px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-family:'Cairo',sans-serif}
+.af-clear:hover{background:rgba(255,255,255,.2)}
+.af-msgs{padding:1rem;min-height:350px;max-height:480px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.af-inp-row{display:flex;gap:8px;padding:.8rem 1rem;border-top:1px solid var(--border);background:var(--bg)}
+.af-input{flex:1;padding:9px 13px;border-radius:var(--rs);border:1.5px solid var(--border);font-family:'Cairo',sans-serif;font-size:13px;outline:none;direction:rtl;background:var(--white)}
+.af-input:focus{border-color:var(--g)}
+.af-send{background:var(--g);color:#fff;border:none;border-radius:var(--rs);padding:9px 18px;cursor:pointer;font-size:15px;transition:.15s}
+.af-send:hover{background:var(--g2)}.af-send:disabled{opacity:.4;cursor:not-allowed}
+.af-info{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1rem}
+.af-info-title{font-size:12px;font-weight:700;margin-bottom:.6rem;display:flex;align-items:center;gap:6px}
+.af-cap{display:flex;align-items:start;gap:7px;padding:.5rem 0;border-bottom:1px dashed var(--border);font-size:12px;color:var(--muted)}
+.af-cap:last-child{border-bottom:none}
+.af-cap-icon{width:22px;height:22px;background:var(--gl);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(60px);background:#0f172a;color:#fff;padding:10px 20px;border-radius:25px;font-size:12.5px;font-weight:500;transition:.3s;z-index:999;opacity:0;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
 /* MODAL */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem}
-.modal{background:#fff;border-radius:16px;max-width:640px;width:100%;max-height:88vh;overflow-y:auto;padding:1.8rem;position:relative;direction:rtl;font-family:'Cairo',sans-serif}
-.modal-close{position:absolute;top:1rem;left:1rem;background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center}
-.modal-close:hover{background:var(--bg)}
+.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
+.modal{background:#fff;border-radius:16px;max-width:580px;width:100%;max-height:88vh;overflow-y:auto;padding:1.8rem;position:relative;direction:rtl;box-shadow:var(--shadow-lg)}
+.modal-x{position:absolute;top:1rem;left:1rem;background:var(--bg);border:1px solid var(--border);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--muted)}
+.modal-x:hover{background:#f1f5f9;color:var(--text)}
 
-/* NOTIFY */
-.notif{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a2e;color:#fff;padding:11px 22px;border-radius:25px;font-size:13px;font-weight:500;transition:.35s;z-index:999;opacity:0;white-space:nowrap}
-.notif.show{transform:translateX(-50%) translateY(0);opacity:1}
-
-/* SCROLL */
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:#c1c1c1;border-radius:3px}
-
-footer{background:var(--gd);color:rgba(255,255,255,.75);text-align:center;padding:1.5rem;font-size:12px;margin-top:3rem}
-footer strong{color:#ffd700}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#94a3b8}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <div class="logo" onclick="showPage('home')">
-    <div class="logo-icon">⭐</div>
-    <div><div class="logo-text">نجوم الجزائر</div><div class="logo-sub">منصة الطور الابتدائي</div></div>
-  </div>
-  <div class="nav-links">
-    <button class="nav-link active" onclick="showPage('home')">🏠 الرئيسية</button>
-    <button class="nav-link" onclick="showPage('generator')">⚙️ مولّد الوثائق</button>
-    <button class="nav-link" onclick="showPage('library')">📚 المكتبة</button>
-    <button class="nav-link" onclick="showPage('ai')">🤖 مساعد AI</button>
-  </div>
-  <button class="nav-cta" onclick="showPage('generator')">✏️ إنشاء وثيقة</button>
-</nav>
+<div class="app-shell">
 
-<!-- ===== HOME ===== -->
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+    </div>
+    <div>
+      <div class="logo-text">نجوم الجزائر</div>
+      <div class="logo-sub">منصة الطور الابتدائي</div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">التنقل</div>
+    <button class="nav-item active" onclick="showPage('home')">
+      <div class="ni-icon">🏠</div> الرئيسية
+    </button>
+    <button class="nav-item" onclick="showPage('generator')">
+      <div class="ni-icon">⚙️</div> مولّد الوثائق
+      <span class="ni-badge">جديد</span>
+    </button>
+    <button class="nav-item" onclick="showPage('library')">
+      <div class="ni-icon">📚</div> المكتبة
+      <span class="ni-badge">536</span>
+    </button>
+    <button class="nav-item" onclick="showPage('ai')">
+      <div class="ni-icon">🤖</div> مساعد AI
+    </button>
+  </div>
+
+  <div class="sidebar-divider"></div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">المواد الدراسية</div>
+    <button class="nav-item" onclick="filterAndGo('arabic')"><div class="ni-icon">📝</div> اللغة العربية</button>
+    <button class="nav-item" onclick="filterAndGo('math')"><div class="ni-icon">🔢</div> الرياضيات</button>
+    <button class="nav-item" onclick="filterAndGo('french')"><div class="ni-icon">🇫🇷</div> الفرنسية</button>
+    <button class="nav-item" onclick="filterAndGo('islamic')"><div class="ni-icon">☪️</div> إسلامية</button>
+    <button class="nav-item" onclick="filterAndGo('science')"><div class="ni-icon">🔬</div> علوم</button>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="ai-status">
+      <div class="ai-pulse"></div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#166534">AI متصل</div>
+        <div style="font-size:10px;color:#16a34a">Claude Sonnet</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+<!-- HOME PAGE -->
 <div id="home-page" class="page active">
-  <div class="hero">
-    <div class="hero-badge">🇩🇿 متوافق مع المنهاج الجزائري الرسمي 2025</div>
-    <h1>المنصة الأولى للمعلّم<br><span>في الطور الابتدائي</span></h1>
-    <p>أنشئ مذكراتك، فروضك، واختباراتك في دقائق — جاهزة للطباعة بخط عربي واضح وتنسيق A4 احترافي</p>
-    <div class="hero-btns">
-      <button class="btn-hero" onclick="showPage('generator')">🚀 ابدأ الإنشاء الآن</button>
-      <button class="btn-ghost" onclick="showPage('ai')">🤖 اسأل المساعد الذكي</button>
+  <div class="home-hero">
+    <div class="hero-chip"><span></span> متوافق مع المنهاج الجزائري الرسمي 2025</div>
+    <h1>المنصة الأولى للمعلّم<br>في <em>الطور الابتدائي</em></h1>
+    <p>أنشئ مذكراتك وفروضك واختباراتك في دقائق — جاهزة للطباعة بتنسيق A4 احترافي مع مساعد ذكاء اصطناعي متكامل</p>
+    <div class="hero-actions">
+      <button class="ha-primary" onclick="showPage('generator')">🚀 ابدأ الإنشاء الآن</button>
+      <button class="ha-outline" onclick="showPage('ai')">🤖 المساعد الذكي</button>
+      <button class="ha-outline" onclick="showPage('library')">📚 تصفح المكتبة</button>
     </div>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-num">+500</div><div class="stat-label">وثيقة جاهزة</div></div>
-      <div class="stat"><div class="stat-num">5</div><div class="stat-label">سنوات دراسية</div></div>
-      <div class="stat"><div class="stat-num">8</div><div class="stat-label">مواد دراسية</div></div>
-      <div class="stat"><div class="stat-num">AI</div><div class="stat-label">مساعد ذكي</div></div>
-    </div>
-  </div>
-
-  <div class="stats-bar">
-    <div class="sbar-item"><div class="sbar-num">536</div><div class="sbar-label">وثيقة متاحة</div></div>
-    <div class="sbar-item"><div class="sbar-num">1,240</div><div class="sbar-label">سؤال في البنك</div></div>
-    <div class="sbar-item"><div class="sbar-num">12</div><div class="sbar-label">مقطعاً تربوياً</div></div>
-    <div class="sbar-item"><div class="sbar-num">100%</div><div class="sbar-label">مجاني</div></div>
-  </div>
-
-  <div class="section">
-    <h2 class="sec-title">اختر السنة الدراسية</h2>
-    <p class="sec-sub">انقر للوصول الفوري إلى وثائق السنة</p>
-    <div class="years-grid">
-      <div class="year-card" onclick="goToYear(1)"><div class="year-icon">🌱</div><div class="year-label">السنة الأولى</div><div class="year-count">87 وثيقة</div></div>
-      <div class="year-card" onclick="goToYear(2)"><div class="year-icon">📗</div><div class="year-label">السنة الثانية</div><div class="year-count">95 وثيقة</div></div>
-      <div class="year-card" onclick="goToYear(3)"><div class="year-icon">📘</div><div class="year-label">السنة الثالثة</div><div class="year-count">102 وثيقة</div></div>
-      <div class="year-card" onclick="goToYear(4)"><div class="year-icon">📙</div><div class="year-label">السنة الرابعة</div><div class="year-count">118 وثيقة</div></div>
-      <div class="year-card" onclick="goToYear(5)"><div class="year-icon">🏆</div><div class="year-label">السنة الخامسة</div><div class="year-count">134 وثيقة</div></div>
+    <div class="hero-kpis">
+      <div class="kpi"><div class="kpi-num">536</div><div class="kpi-lbl">وثيقة جاهزة</div></div>
+      <div class="kpi"><div class="kpi-num">1,240</div><div class="kpi-lbl">سؤال في البنك</div></div>
+      <div class="kpi"><div class="kpi-num">5</div><div class="kpi-lbl">سنوات دراسية</div></div>
+      <div class="kpi"><div class="kpi-num">AI</div><div class="kpi-lbl">مساعد ذكي</div></div>
     </div>
   </div>
 
-  <div style="background:var(--white);padding:2.5rem 1.5rem;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
-    <div style="max-width:1100px;margin:0 auto">
-      <h2 class="sec-title">لماذا نجوم الجزائر؟</h2>
-      <p class="sec-sub">أدوات مصممة خصيصاً للمعلّم الجزائري</p>
-      <div class="feat-grid">
-        <div class="feat-card"><div class="feat-icon">🤖</div><div class="feat-title">مساعد AI ذكي</div><div class="feat-desc">اسأل المساعد عن أي موضوع تربوي واحصل على أسئلة واقتراحات فورية مولّدة بالذكاء الاصطناعي</div></div>
-        <div class="feat-card"><div class="feat-icon">📄</div><div class="feat-title">PDF احترافي فوري</div><div class="feat-desc">تصدير مباشر بتنسيق A4 مع ترويسة كاملة — اسم المدرسة، المقاطعة، والتاريخ</div></div>
-        <div class="feat-card"><div class="feat-icon">✍️</div><div class="feat-title">خط النسخ للأطفال</div><div class="feat-desc">نصوص بخط عربي واضح مناسب لعين الطفل في المرحلة الابتدائية</div></div>
-        <div class="feat-card"><div class="feat-icon">⚡</div><div class="feat-title">3 دقائق فقط</div><div class="feat-desc">من الاختيار إلى PDF جاهز في 3 خطوات بسيطة — لا خبرة تقنية مطلوبة</div></div>
-        <div class="feat-card"><div class="feat-icon">📋</div><div class="feat-title">جميع أنواع الوثائق</div><div class="feat-desc">مذكرات يومية، فروض منزلية، اختبارات فصلية، وتقويمات تشخيصية</div></div>
-        <div class="feat-card"><div class="feat-icon">📚</div><div class="feat-title">منهاج رسمي 100%</div><div class="feat-desc">كل المحتوى مصنّف حسب المقاطع التربوية لوزارة التربية الوطنية الجزائرية</div></div>
+  <div class="stat-strip">
+    <div class="ss-item"><div class="ss-val">12</div><div class="ss-lbl">مقطعاً تربوياً</div></div>
+    <div class="ss-item"><div class="ss-val">8</div><div class="ss-lbl">مواد دراسية</div></div>
+    <div class="ss-item"><div class="ss-val">100%</div><div class="ss-lbl">مجاني تماماً</div></div>
+    <div class="ss-item"><div class="ss-val">PDF</div><div class="ss-lbl">تصدير فوري</div></div>
+  </div>
+
+  <div class="content-area">
+    <div class="section-header">
+      <div><div class="sh-title">السنوات الدراسية</div><div class="sh-sub">اختر السنة للوصول الفوري</div></div>
+      <button class="sh-link" onclick="showPage('library')">عرض الكل ←</button>
+    </div>
+    <div class="years-row">
+      <div class="yr-card" onclick="goToYear(1)"><span class="yr-emoji">🌱</span><div class="yr-name">السنة الأولى</div><div class="yr-count">87 وثيقة</div></div>
+      <div class="yr-card" onclick="goToYear(2)"><span class="yr-emoji">📗</span><div class="yr-name">السنة الثانية</div><div class="yr-count">95 وثيقة</div></div>
+      <div class="yr-card" onclick="goToYear(3)"><span class="yr-emoji">📘</span><div class="yr-name">السنة الثالثة</div><div class="yr-count">102 وثيقة</div></div>
+      <div class="yr-card" onclick="goToYear(4)"><span class="yr-emoji">📙</span><div class="yr-name">السنة الرابعة</div><div class="yr-count">118 وثيقة</div></div>
+      <div class="yr-card" onclick="goToYear(5)"><span class="yr-emoji">🏆</span><div class="yr-name">السنة الخامسة</div><div class="yr-count">134 وثيقة</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:1rem">
+      <div>
+        <div class="section-header">
+          <div><div class="sh-title">لماذا نجوم الجزائر؟</div></div>
+        </div>
+        <div class="feat-grid">
+          <div class="fc"><div class="fc-icon" style="background:#f0fdf4">🤖</div><div class="fc-title">مساعد AI حقيقي</div><div class="fc-desc">أسئلة ومحتوى مولّد بالذكاء الاصطناعي فوراً</div></div>
+          <div class="fc"><div class="fc-icon" style="background:#eff6ff">📄</div><div class="fc-title">PDF احترافي</div><div class="fc-desc">تصدير A4 مع ترويسة كاملة للمؤسسة</div></div>
+          <div class="fc"><div class="fc-icon" style="background:#fefce8">✍️</div><div class="fc-title">خط الأطفال</div><div class="fc-desc">نصوص واضحة مناسبة للمرحلة الابتدائية</div></div>
+          <div class="fc"><div class="fc-icon" style="background:#fdf4ff">⚡</div><div class="fc-title">3 دقائق فقط</div><div class="fc-desc">من الاختيار إلى PDF في 3 خطوات</div></div>
+          <div class="fc"><div class="fc-icon" style="background:#fff7ed">📋</div><div class="fc-title">كل أنواع الوثائق</div><div class="fc-desc">مذكرات، فروض، اختبارات، تقويمات</div></div>
+          <div class="fc"><div class="fc-icon" style="background:#f0fdf4">📚</div><div class="fc-title">منهاج رسمي</div><div class="fc-desc">مصنّف حسب مقاطع وزارة التربية</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="section-header">
+          <div><div class="sh-title">آخر الوثائق المضافة</div></div>
+          <button class="sh-link" onclick="showPage('library')">عرض الكل ←</button>
+        </div>
+        <div class="recent-list" id="recent-list"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ===== GENERATOR ===== -->
+<!-- GENERATOR PAGE -->
 <div id="generator-page" class="page">
-  <div style="padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);background:var(--white);display:flex;align-items:center;gap:10px">
-    <span style="font-size:1.3rem;font-weight:800">⚙️ مولّد الوثائق الذكي</span>
-    <span style="font-size:12px;color:var(--muted);background:var(--gl);color:var(--g);padding:3px 10px;border-radius:20px;font-weight:600">3 خطوات فقط</span>
+  <div class="topbar">
+    <div class="topbar-left">
+      <div>
+        <div class="topbar-title">⚙️ مولّد الوثائق الذكي</div>
+        <div class="topbar-sub">أنشئ وثيقتك في 3 خطوات</div>
+      </div>
+      <span class="tb-badge">AI مدمج</span>
+    </div>
+    <div class="topbar-right">
+      <button class="tb-btn tb-btn-ghost" onclick="resetGen()">🔄 إعادة تعيين</button>
+      <button class="tb-btn tb-btn-primary" onclick="downloadPDF()" id="dl-top-btn" disabled>⬇️ تحميل PDF</button>
+    </div>
   </div>
-  <div class="gen-wrap">
-    <!-- FORM -->
-    <div>
-      <div class="gen-box" style="margin-bottom:16px">
-        <div class="gen-head"><span style="font-size:18px">📝</span><h3>إعدادات الوثيقة</h3></div>
-        <div class="gen-body">
-          <div class="steps">
-            <div class="step active" id="s1"><span class="step-num">١</span>التصنيف</div>
-            <div class="step" id="s2"><span class="step-num">٢</span>الأسئلة</div>
-            <div class="step" id="s3"><span class="step-num">٣</span>PDF</div>
+
+  <div class="gen-layout">
+    <!-- Left Panel -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-head-title">📝 إعدادات الوثيقة</div>
+          <div class="panel-head-badge">خطوة بخطوة</div>
+        </div>
+        <div class="panel-body">
+          <div class="stepper">
+            <div class="step-btn active" id="s1"><span class="sn">١</span>التصنيف</div>
+            <div class="step-btn" id="s2"><span class="sn">٢</span>الأسئلة</div>
+            <div class="step-btn" id="s3"><span class="sn">٣</span>التصدير</div>
           </div>
 
           <!-- STEP 1 -->
           <div id="st1">
-            <label class="lbl">📅 السنة الدراسية</label>
-            <select class="sel" id="sy">
-              <option value="">— اختر السنة —</option>
-              <option value="1">السنة الأولى ابتدائي</option>
-              <option value="2">السنة الثانية ابتدائي</option>
-              <option value="3">السنة الثالثة ابتدائي</option>
-              <option value="4">السنة الرابعة ابتدائي</option>
-              <option value="5">السنة الخامسة ابتدائي</option>
-            </select>
-            <label class="lbl">📖 المادة الدراسية</label>
-            <select class="sel" id="ssub">
-              <option value="">— اختر المادة —</option>
-              <option value="arabic">اللغة العربية</option>
-              <option value="math">الرياضيات</option>
-              <option value="french">اللغة الفرنسية</option>
-              <option value="islamic">التربية الإسلامية</option>
-              <option value="civic">التربية المدنية</option>
-              <option value="science">التربية العلمية والتكنولوجية</option>
-            </select>
-            <label class="lbl">📌 المقطع التربوي</label>
-            <select class="sel" id="sunit">
-              <option>المقطع 1 — أنا والعائلة</option>
-              <option>المقطع 2 — أنا والمدرسة</option>
-              <option>المقطع 3 — أنا والحي</option>
-              <option>المقطع 4 — أنا والبيئة</option>
-              <option>المقطع 5 — أنا والوطن</option>
-            </select>
-            <label class="lbl">📝 نوع الوثيقة</label>
-            <select class="sel" id="stype">
-              <option>فرض منزلي</option>
-              <option>اختبار فصلي</option>
-              <option>مذكرة يومية</option>
-              <option>تقويم تشخيصي</option>
-            </select>
-            <label class="lbl">🏫 اسم المؤسسة</label>
-            <input class="inp" id="isch" placeholder="مثال: ابتدائية الشهيد بوقرة">
-            <label class="lbl">📍 المقاطعة التربوية</label>
-            <input class="inp" id="idis" placeholder="مثال: مقاطعة سيدي الحواس">
-            <button class="gbtn" onclick="toStep2()">التالي: اختيار الأسئلة ←</button>
+            <div class="field">
+              <label>📅 السنة الدراسية</label>
+              <select class="fsel" id="sy">
+                <option value="">— اختر السنة —</option>
+                <option value="1">السنة الأولى ابتدائي</option>
+                <option value="2">السنة الثانية ابتدائي</option>
+                <option value="3">السنة الثالثة ابتدائي</option>
+                <option value="4">السنة الرابعة ابتدائي</option>
+                <option value="5">السنة الخامسة ابتدائي</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>📖 المادة الدراسية</label>
+              <select class="fsel" id="ssub">
+                <option value="">— اختر المادة —</option>
+                <option value="arabic">اللغة العربية</option>
+                <option value="math">الرياضيات</option>
+                <option value="french">اللغة الفرنسية</option>
+                <option value="islamic">التربية الإسلامية</option>
+                <option value="civic">التربية المدنية</option>
+                <option value="science">العلوم والتكنولوجيا</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>📌 المقطع التربوي</label>
+              <select class="fsel" id="sunit">
+                <option>المقطع 1 — أنا والعائلة</option>
+                <option>المقطع 2 — أنا والمدرسة</option>
+                <option>المقطع 3 — أنا والحي</option>
+                <option>المقطع 4 — أنا والبيئة</option>
+                <option>المقطع 5 — أنا والوطن</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>📝 نوع الوثيقة</label>
+              <select class="fsel" id="stype">
+                <option>فرض منزلي</option>
+                <option>اختبار فصلي</option>
+                <option>مذكرة يومية</option>
+                <option>تقويم تشخيصي</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>🏫 اسم المؤسسة</label>
+              <input class="finp" id="isch" placeholder="مثال: ابتدائية الشهيد بوقرة">
+            </div>
+            <div class="field">
+              <label>📍 المقاطعة التربوية</label>
+              <input class="finp" id="idis" placeholder="مثال: مقاطعة سيدي الحواس">
+            </div>
+            <button class="btn-full btn-green" onclick="toStep2()">التالي: اختيار الأسئلة ←</button>
           </div>
 
           <!-- STEP 2 -->
           <div id="st2" style="display:none">
-            <p style="font-size:12px;color:var(--muted);margin-bottom:1rem">اختر الأسئلة للتضمين في الوثيقة. يمكنك أيضاً توليد أسئلة بالذكاء الاصطناعي.</p>
-            <button class="gbtn" style="margin-bottom:10px;background:#1a1a2e;display:flex;align-items:center;justify-content:center;gap:8px" onclick="genAIQuestions()">
-              <span>🤖</span> توليد أسئلة بالذكاء الاصطناعي
-            </button>
+            <p style="font-size:11.5px;color:var(--muted);margin-bottom:.8rem;line-height:1.7">اختر الأسئلة أو ولّد أسئلة جديدة بالذكاء الاصطناعي.</p>
+            <button class="btn-full btn-dark" style="margin-bottom:10px" onclick="genAI()" id="ai-gen-btn">🤖 توليد أسئلة بالذكاء الاصطناعي</button>
             <div id="qlist"></div>
-            <button class="gbtn" onclick="toStep3()" style="margin-top:8px">معاينة وتحميل PDF ←</button>
-            <button class="gbtn-ghost" onclick="toStep1()">→ العودة</button>
+            <button class="btn-full btn-green" onclick="toStep3()" style="margin-top:8px">معاينة وتحميل PDF ←</button>
+            <button class="btn-ghost-sm" onclick="toStep1()">→ العودة</button>
           </div>
 
           <!-- STEP 3 -->
           <div id="st3" style="display:none">
-            <div style="text-align:center;padding:1rem 0">
-              <div style="font-size:3rem;margin-bottom:.5rem">✅</div>
-              <p style="font-weight:700;font-size:14px">الوثيقة جاهزة!</p>
-              <p style="font-size:12px;color:var(--muted);margin-top:4px">راجع المعاينة ثم حمّل PDF</p>
+            <div style="text-align:center;padding:1.2rem 0">
+              <div style="width:60px;height:60px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto .8rem">✅</div>
+              <div style="font-weight:800;font-size:14px">الوثيقة جاهزة!</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:4px">راجع المعاينة ثم حمّل PDF</div>
             </div>
-            <button class="gbtn" onclick="downloadPDF()" style="display:flex;align-items:center;justify-content:center;gap:8px">
-              <span>⬇️</span> تحميل PDF الآن
-            </button>
-            <button class="gbtn-ghost" onclick="toStep1()">→ وثيقة جديدة</button>
+            <button class="btn-full btn-green" onclick="downloadPDF()">⬇️ تحميل PDF الآن</button>
+            <button class="btn-ghost-sm" onclick="resetGen()">+ وثيقة جديدة</button>
           </div>
         </div>
       </div>
 
-      <!-- AI QUICK -->
-      <div class="ai-section">
+      <!-- AI MINI CHAT -->
+      <div class="ai-mini">
         <div class="ai-head">
-          <h3>🤖 مساعد AI <div class="ai-dot"></div></h3>
-          <span style="font-size:11px;opacity:.7">اسأل عن أي سؤال تربوي</span>
+          <div class="ai-head-title">🤖 مساعد سريع <div class="ai-pulse"></div></div>
+          <div class="ai-head-sub">اسأل أي سؤال</div>
         </div>
-        <div class="ai-messages" id="mini-msgs">
-          <div class="msg msg-ai">مرحباً! أنا مساعدك التربوي. يمكنني توليد أسئلة، اقتراح أنشطة، أو الإجابة على أسئلتك حول المناهج. 📚</div>
+        <div class="ai-msgs" id="mini-msgs">
+          <div class="m m-ai">مرحباً! أنا مساعدك التربوي. يمكنني توليد أسئلة واقتراح أنشطة. 📚</div>
         </div>
-        <div class="ai-input-row">
-          <input class="ai-inp" id="mini-inp" placeholder="اكتب سؤالك هنا..." onkeydown="if(event.key==='Enter')sendMini()">
-          <button class="ai-send" onclick="sendMini()" id="mini-btn">➤</button>
+        <div class="ai-inp-row">
+          <input class="ai-text-inp" id="mini-inp" placeholder="اكتب سؤالك..." onkeydown="if(event.key==='Enter')sendMini()">
+          <button class="ai-send-btn" onclick="sendMini()" id="mini-btn">➤</button>
         </div>
       </div>
     </div>
 
-    <!-- PREVIEW -->
-    <div>
-      <div class="preview-wrap">
-        <div class="preview-top">
-          <span>📄 معاينة الوثيقة</span>
-          <button class="pdf-btn" onclick="downloadPDF()" id="pdf-top-btn" disabled>⬇️ تحميل PDF</button>
+    <!-- Right: Preview -->
+    <div class="preview-area">
+      <div class="preview-panel">
+        <div class="preview-toolbar">
+          <span style="font-size:13px;font-weight:700;color:var(--muted)">📄 معاينة الوثيقة</span>
+          <div style="display:flex;gap:7px;align-items:center">
+            <span id="q-count-badge" style="font-size:11px;color:var(--muted)"></span>
+            <button class="tb-btn tb-btn-primary" onclick="downloadPDF()" id="pdf-top-btn" disabled style="padding:7px 16px;font-size:12px">⬇️ PDF</button>
+          </div>
         </div>
-        <div id="preview-body">
-          <div class="empty-preview">
-            <div style="font-size:3.5rem;margin-bottom:1rem">📋</div>
-            <p style="font-size:14px;font-weight:600">ستظهر معاينة الوثيقة هنا</p>
-            <p style="font-size:12px;margin-top:.4rem">أكمل الخطوات لمشاهدة الوثيقة</p>
+        <div id="preview-body" class="preview-body">
+          <div class="empty-state">
+            <div class="es-icon">📋</div>
+            <div class="es-title">ستظهر معاينة الوثيقة هنا</div>
+            <div class="es-sub">أكمل الخطوات لمشاهدة الوثيقة النهائية</div>
           </div>
         </div>
       </div>
@@ -378,77 +530,110 @@ footer strong{color:#ffd700}
   </div>
 </div>
 
-<!-- ===== LIBRARY ===== -->
+<!-- LIBRARY PAGE -->
 <div id="library-page" class="page">
-  <div style="padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);background:var(--white)">
-    <span style="font-size:1.3rem;font-weight:800">📚 مكتبة الوثائق</span>
-    <p style="font-size:13px;color:var(--muted);margin-top:3px">تصفّح وحمّل وثائق جاهزة</p>
-  </div>
-  <div class="lib-wrap">
-    <div class="filter-bar">
-      <input type="text" id="search-inp" placeholder="🔍 ابحث عن وثيقة..." oninput="filterLib()">
-      <button class="ftab active" onclick="setTab('all',this)">الكل</button>
-      <button class="ftab" onclick="setTab('arabic',this)">عربية</button>
-      <button class="ftab" onclick="setTab('math',this)">رياضيات</button>
-      <button class="ftab" onclick="setTab('french',this)">فرنسية</button>
-      <button class="ftab" onclick="setTab('islamic',this)">إسلامية</button>
-      <button class="ftab" onclick="setTab('civic',this)">مدنية</button>
+  <div class="topbar">
+    <div class="topbar-left">
+      <div>
+        <div class="topbar-title">📚 مكتبة الوثائق</div>
+        <div class="topbar-sub">536 وثيقة جاهزة للتحميل</div>
+      </div>
     </div>
-    <div class="doc-grid" id="doc-grid"></div>
+    <div class="topbar-right">
+      <button class="tb-btn tb-btn-primary" onclick="showPage('generator')">+ وثيقة جديدة</button>
+    </div>
   </div>
+  <div class="lib-topbar">
+    <div class="search-box">
+      <span style="color:var(--muted);font-size:14px">🔍</span>
+      <input id="search-inp" placeholder="ابحث عن وثيقة..." oninput="filterLib()">
+    </div>
+    <button class="filter-chip active" onclick="setTab('all',this)">الكل</button>
+    <button class="filter-chip" onclick="setTab('arabic',this)">عربية</button>
+    <button class="filter-chip" onclick="setTab('math',this)">رياضيات</button>
+    <button class="filter-chip" onclick="setTab('french',this)">فرنسية</button>
+    <button class="filter-chip" onclick="setTab('islamic',this)">إسلامية</button>
+    <button class="filter-chip" onclick="setTab('civic',this)">مدنية</button>
+    <button class="filter-chip" onclick="setTab('science',this)">علوم</button>
+  </div>
+  <div class="doc-grid" id="doc-grid"></div>
 </div>
 
-<!-- ===== AI PAGE ===== -->
+<!-- AI PAGE -->
 <div id="ai-page" class="page">
-  <div style="padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:space-between">
-    <div>
-      <span style="font-size:1.3rem;font-weight:800">🤖 المساعد التربوي الذكي</span>
-      <p style="font-size:13px;color:var(--muted);margin-top:3px">مدعوم بالذكاء الاصطناعي — اسأل أي سؤال تربوي</p>
+  <div class="topbar">
+    <div class="topbar-left">
+      <div>
+        <div class="topbar-title">🤖 المساعد التربوي الذكي</div>
+        <div class="topbar-sub">مدعوم بـ Claude Sonnet — اسأل أي سؤال تربوي</div>
+      </div>
+      <span class="tb-badge">AI متصل</span>
     </div>
-    <div class="ai-dot" style="width:10px;height:10px"></div>
+    <div class="topbar-right">
+      <button class="tb-btn tb-btn-ghost" onclick="clearChat()">🗑️ مسح المحادثة</button>
+    </div>
   </div>
-  <div style="max-width:800px;margin:1.5rem auto;padding:0 1.5rem">
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem">
-      <button class="ftab" onclick="quickAsk('اقترح لي 5 أسئلة في اللغة العربية للسنة الثالثة حول الأسرة')">💡 أسئلة عربية س3</button>
-      <button class="ftab" onclick="quickAsk('اقترح أنشطة تعليمية ممتعة لتدريس الجمع والطرح للسنة الأولى')">➕ أنشطة رياضيات</button>
-      <button class="ftab" onclick="quickAsk('كيف أشرح مفهوم الوطن للأطفال في السنة الرابعة بطريقة بسيطة؟')">🏛️ التربية المدنية</button>
-      <button class="ftab" onclick="quickAsk('أعطني مسائل رياضيات بسيطة ومرتبة بالصعوبة للسنة الثانية')">📊 مسائل متدرجة</button>
+  <div class="ai-page-wrap">
+    <div class="ai-sidebar-panel">
+      <div class="quick-prompts">
+        <div class="qp-head">💡 اقتراحات سريعة</div>
+        <div class="qp-list">
+          <button class="qp-btn" onclick="quickAsk('اقترح 5 أسئلة في اللغة العربية للسنة الثالثة حول موضوع الأسرة')">📝 أسئلة عربية — س3</button>
+          <button class="qp-btn" onclick="quickAsk('اقترح أنشطة تعليمية ممتعة لتدريس الجمع والطرح للسنة الأولى')">➕ أنشطة رياضيات — س1</button>
+          <button class="qp-btn" onclick="quickAsk('كيف أشرح مفهوم الوطن للأطفال في السنة الرابعة بطريقة بسيطة؟')">🏛️ التربية المدنية — س4</button>
+          <button class="qp-btn" onclick="quickAsk('أعطني مسائل رياضيات متدرجة الصعوبة للسنة الثانية')">📊 مسائل متدرجة — س2</button>
+          <button class="qp-btn" onclick="quickAsk('اقترح وضعية إدماجية في مادة العلوم للسنة الخامسة')">🔬 وضعية إدماجية — س5</button>
+          <button class="qp-btn" onclick="quickAsk('كيف أكتب مذكرة يومية بطريقة صحيحة حسب المنهاج الجزائري؟')">📋 كيفية كتابة مذكرة</button>
+          <button class="qp-btn" onclick="quickAsk('اقترح أسئلة تقويم تشخيصي في الرياضيات للسنة الثالثة')">📐 تقويم تشخيصي</button>
+        </div>
+      </div>
+      <div class="af-info">
+        <div class="af-info-title">🎯 قدرات المساعد</div>
+        <div class="af-cap"><div class="af-cap-icon">📝</div><span>توليد أسئلة حسب المادة والمستوى والمقطع</span></div>
+        <div class="af-cap"><div class="af-cap-icon">💡</div><span>اقتراح أنشطة وطرق تعليمية مبتكرة</span></div>
+        <div class="af-cap"><div class="af-cap-icon">📖</div><span>شرح مفاهيم المنهاج الجزائري</span></div>
+        <div class="af-cap"><div class="af-cap-icon">✏️</div><span>إعداد خطط دروس ووضعيات إدماجية</span></div>
+      </div>
     </div>
-    <div class="ai-section">
-      <div class="ai-head">
-        <h3>🤖 المساعد التربوي <div class="ai-dot"></div></h3>
-        <button onclick="clearChat()" style="background:rgba(255,255,255,.15);border:none;color:#fff;padding:5px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-family:'Cairo',sans-serif">مسح المحادثة</button>
-      </div>
-      <div class="ai-messages" id="main-msgs" style="min-height:350px;max-height:450px">
-        <div class="msg msg-ai">أهلاً بك! أنا مساعدك التربوي المدعوم بالذكاء الاصطناعي.<br><br>يمكنني مساعدتك في:<br>• توليد أسئلة حسب المادة والمستوى<br>• اقتراح أنشطة تعليمية<br>• شرح مفاهيم المنهاج<br>• إعداد خطط دروس<br><br>ابدأ بسؤالك! 🎓</div>
-      </div>
-      <div class="ai-input-row">
-        <input class="ai-inp" id="main-inp" placeholder="مثال: اقترح 5 أسئلة في الرياضيات للسنة الثالثة..." onkeydown="if(event.key==='Enter')sendMain()">
-        <button class="ai-send" onclick="sendMain()" id="main-btn">➤</button>
+    <div class="ai-main-panel">
+      <div class="ai-full">
+        <div class="af-head">
+          <div class="af-title">🤖 المساعد التربوي <div class="ai-pulse"></div></div>
+          <button class="af-clear" onclick="clearChat()">مسح المحادثة</button>
+        </div>
+        <div class="af-msgs" id="main-msgs">
+          <div class="m m-ai">أهلاً بك! أنا مساعدك التربوي المتخصص في المناهج الجزائرية للطور الابتدائي.<br><br>يمكنني مساعدتك في توليد الأسئلة، اقتراح الأنشطة، شرح المفاهيم، وإعداد خطط الدروس.<br><br>اختر من الاقتراحات أو اكتب سؤالك مباشرة! 🎓</div>
+        </div>
+        <div class="af-inp-row">
+          <input class="af-input" id="main-inp" placeholder="مثال: اقترح 5 أسئلة في الرياضيات للسنة الثالثة..." onkeydown="if(event.key==='Enter')sendMain()">
+          <button class="af-send" onclick="sendMain()" id="main-btn">➤</button>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<footer>صُنع بـ ❤️ لكل معلّم جزائري — <strong>نجوم الجزائر</strong> © 2025 | الطور الابتدائي — من السنة الأولى إلى الخامسة</footer>
-<div class="notif" id="notif"></div>
+</main>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-const {jsPDF} = window.jspdf;
+const {jsPDF}=window.jspdf;
 
 const DOCS=[
-  {name:'فرض لغة عربية - س1 - م1',subj:'arabic',year:'السنة الأولى ابتدائي',type:'فرض',icon:'📝',color:'#e8f5ee'},
-  {name:'اختبار رياضيات - س3 - ف1',subj:'math',year:'السنة الثالثة ابتدائي',type:'اختبار',icon:'🔢',color:'#e0f2fe'},
-  {name:'مذكرة فرنسية - س2 - م2',subj:'french',year:'السنة الثانية ابتدائي',type:'مذكرة',icon:'🇫🇷',color:'#fef9c3'},
-  {name:'فرض تربية إسلامية - س4',subj:'islamic',year:'السنة الرابعة ابتدائي',type:'فرض',icon:'☪️',color:'#ede9fe'},
-  {name:'اختبار لغة عربية - س5 - ف2',subj:'arabic',year:'السنة الخامسة ابتدائي',type:'اختبار',icon:'📝',color:'#e8f5ee'},
-  {name:'فرض رياضيات - س2 - م3',subj:'math',year:'السنة الثانية ابتدائي',type:'فرض',icon:'🔢',color:'#e0f2fe'},
-  {name:'مذكرة تربية مدنية - س1',subj:'civic',year:'السنة الأولى ابتدائي',type:'مذكرة',icon:'🏛️',color:'#fee2e2'},
-  {name:'اختبار فرنسية - س5 - ف3',subj:'french',year:'السنة الخامسة ابتدائي',type:'اختبار',icon:'🇫🇷',color:'#fef9c3'},
-  {name:'تقويم تشخيصي - س3 - عربية',subj:'arabic',year:'السنة الثالثة ابتدائي',type:'تقويم',icon:'📊',color:'#e8f5ee'},
-  {name:'فرض علوم - س4 - م2',subj:'science',year:'السنة الرابعة ابتدائي',type:'فرض',icon:'🔬',color:'#dcfce7'},
-  {name:'مذكرة رياضيات - س1 - م1',subj:'math',year:'السنة الأولى ابتدائي',type:'مذكرة',icon:'🔢',color:'#e0f2fe'},
-  {name:'اختبار إسلامية - س2 - ف2',subj:'islamic',year:'السنة الثانية ابتدائي',type:'اختبار',icon:'☪️',color:'#ede9fe'},
+  {name:'فرض لغة عربية — س1 — م1',subj:'arabic',year:'السنة الأولى ابتدائي',type:'فرض',icon:'📝',bg:'#f0fdf4'},
+  {name:'اختبار رياضيات — س3 — ف1',subj:'math',year:'السنة الثالثة ابتدائي',type:'اختبار',icon:'🔢',bg:'#eff6ff'},
+  {name:'مذكرة فرنسية — س2 — م2',subj:'french',year:'السنة الثانية ابتدائي',type:'مذكرة',icon:'🇫🇷',bg:'#fefce8'},
+  {name:'فرض تربية إسلامية — س4',subj:'islamic',year:'السنة الرابعة ابتدائي',type:'فرض',icon:'☪️',bg:'#fdf4ff'},
+  {name:'اختبار لغة عربية — س5 — ف2',subj:'arabic',year:'السنة الخامسة ابتدائي',type:'اختبار',icon:'📝',bg:'#f0fdf4'},
+  {name:'فرض رياضيات — س2 — م3',subj:'math',year:'السنة الثانية ابتدائي',type:'فرض',icon:'🔢',bg:'#eff6ff'},
+  {name:'مذكرة تربية مدنية — س1',subj:'civic',year:'السنة الأولى ابتدائي',type:'مذكرة',icon:'🏛️',bg:'#fff7ed'},
+  {name:'اختبار فرنسية — س5 — ف3',subj:'french',year:'السنة الخامسة ابتدائي',type:'اختبار',icon:'🇫🇷',bg:'#fefce8'},
+  {name:'تقويم تشخيصي — س3 — عربية',subj:'arabic',year:'السنة الثالثة ابتدائي',type:'تقويم',icon:'📊',bg:'#f0fdf4'},
+  {name:'فرض علوم — س4 — م2',subj:'science',year:'السنة الرابعة ابتدائي',type:'فرض',icon:'🔬',bg:'#f0fdf4'},
+  {name:'مذكرة رياضيات — س1 — م1',subj:'math',year:'السنة الأولى ابتدائي',type:'مذكرة',icon:'🔢',bg:'#eff6ff'},
+  {name:'اختبار إسلامية — س2 — ف2',subj:'islamic',year:'السنة الثانية ابتدائي',type:'اختبار',icon:'☪️',bg:'#fdf4ff'},
 ];
 
 const QS=[
@@ -462,367 +647,337 @@ const QS=[
   {id:8,text:'أكمل: ٣ × ٤ = ... و ٢٤ ÷ ٦ = ...',diff:'med',type:'عملية',pts:3,subj:'math'},
 ];
 
-let selQs=new Set(), curTab='all', aiQsAdded=[];
+let selQs=new Set(),curTab='all',aiQs=[];
 
-// ===== NAV =====
+// NAVIGATION
 function showPage(p){
   document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
   document.getElementById(p+'-page').classList.add('active');
-  document.querySelectorAll('.nav-link').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
   const map={home:0,generator:1,library:2,ai:3};
-  if(map[p]!==undefined) document.querySelectorAll('.nav-link')[map[p]].classList.add('active');
-  if(p==='library') renderLib();
+  if(map[p]!==undefined)document.querySelectorAll('.nav-item')[map[p]].classList.add('active');
+  if(p==='library')renderLib();
 }
 
-// ===== YEAR CARDS =====
-function goToYear(n){
-  const labels=['','الأولى','الثانية','الثالثة','الرابعة','الخامسة'];
-  const yearStr='السنة '+labels[n]+' ابتدائي';
+function filterAndGo(subj){
   showPage('library');
   setTimeout(()=>{
-    document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
-    document.querySelector('.ftab').classList.add('active');
-    curTab='all';
-    renderLibFiltered(DOCS.filter(d=>d.year===yearStr));
-    notify('📂 وثائق السنة '+labels[n]);
-  },50);
+    curTab=subj;
+    document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+    filterLib();
+  },30);
 }
 
-// ===== GENERATOR STEPS =====
-function toStep1(){selQs.clear();aiQsAdded=[];setSteps(1);document.getElementById('st1').style.display='block';document.getElementById('st2').style.display='none';document.getElementById('st3').style.display='none';document.getElementById('preview-body').innerHTML='<div class="empty-preview"><div style="font-size:3.5rem;margin-bottom:1rem">📋</div><p style="font-size:14px;font-weight:600">ستظهر معاينة الوثيقة هنا</p></div>';document.getElementById('pdf-top-btn').disabled=true;}
-function toStep2(){
-  if(!document.getElementById('sy').value||!document.getElementById('ssub').value){notify('⚠️ اختر السنة والمادة أولاً');return;}
-  setSteps(2);document.getElementById('st1').style.display='none';document.getElementById('st2').style.display='block';document.getElementById('st3').style.display='none';
-  renderQlist();
+function goToYear(n){
+  const L=['','الأولى','الثانية','الثالثة','الرابعة','الخامسة'];
+  const yr='السنة '+L[n]+' ابتدائي';
+  showPage('library');
+  setTimeout(()=>{
+    curTab='all';
+    document.querySelectorAll('.filter-chip')[0].classList.add('active');
+    renderLibFiltered(DOCS.filter(d=>d.year===yr));
+    toast('📂 وثائق السنة '+L[n]);
+  },30);
 }
-function toStep3(){
-  if(selQs.size===0){notify('⚠️ اختر سؤالاً واحداً على الأقل');return;}
-  setSteps(3);document.getElementById('st2').style.display='none';document.getElementById('st3').style.display='block';
-  buildPreview();document.getElementById('pdf-top-btn').disabled=false;
+
+// RECENT
+function renderRecent(){
+  document.getElementById('recent-list').innerHTML=DOCS.slice(0,5).map((d,i)=>`
+    <div class="rl-item" onclick="previewDoc(${i})">
+      <div class="rl-icon" style="background:${d.bg}">${d.icon}</div>
+      <div style="flex:1">
+        <div class="rl-name">${d.name}</div>
+        <div class="rl-meta">${d.year}</div>
+      </div>
+      <span class="rl-badge" style="background:#f1f5f9;color:#64748b">${d.type}</span>
+    </div>`).join('');
 }
-function setSteps(n){for(let i=1;i<=3;i++){const e=document.getElementById('s'+i);e.className='step'+(i===n?' active':i<n?' done':'');}}
+
+// GENERATOR STEPS
+function toStep1(){selQs.clear();aiQs=[];setSteps(1);show('st1');hide('st2');hide('st3');document.getElementById('preview-body').innerHTML='<div class="empty-state"><div class="es-icon">📋</div><div class="es-title">ستظهر معاينة الوثيقة هنا</div><div class="es-sub">أكمل الخطوات لمشاهدة الوثيقة</div></div>';document.getElementById('pdf-top-btn').disabled=true;document.getElementById('dl-top-btn').disabled=true;document.getElementById('q-count-badge').textContent='';}
+function toStep2(){if(!document.getElementById('sy').value||!document.getElementById('ssub').value){toast('⚠️ اختر السنة والمادة أولاً');return;}setSteps(2);hide('st1');show('st2');hide('st3');renderQlist();}
+function toStep3(){if(selQs.size===0){toast('⚠️ اختر سؤالاً واحداً على الأقل');return;}setSteps(3);hide('st2');show('st3');buildPreview();document.getElementById('pdf-top-btn').disabled=false;document.getElementById('dl-top-btn').disabled=false;}
+function resetGen(){toStep1();}
+function setSteps(n){for(let i=1;i<=3;i++){const e=document.getElementById('s'+i);e.className='step-btn'+(i===n?' active':i<n?' done':'');}}
+function show(id){document.getElementById(id).style.display='block';}
+function hide(id){document.getElementById(id).style.display='none';}
 
 function renderQlist(){
-  const all=[...QS,...aiQsAdded];
-  document.getElementById('qlist').innerHTML=all.map(q=>`
-    <div class="q-item${selQs.has(q.id)?' sel':''}" onclick="toggleQ(${q.id},this)">
-      <div class="q-chk">${selQs.has(q.id)?'✓':''}</div>
-      <div>
-        <div class="q-txt">${q.text}</div>
-        <div class="badges">
-          <span class="badge ${q.diff==='easy'?'b-e':q.diff==='med'?'b-m':'b-h'}">${q.diff==='easy'?'سهل':q.diff==='med'?'متوسط':'صعب'}</span>
-          <span class="badge b-t">${q.type}</span>
-          <span class="badge b-p">${q.pts} نقطة</span>
-        </div>
+  const all=[...QS,...aiQs];
+  const el=document.getElementById('qlist');
+  el.innerHTML=all.length===0?'<p style="font-size:12px;color:var(--muted);text-align:center;padding:1rem">ولّد أسئلة AI أو استخدم الأسئلة الجاهزة أدناه</p>':'';
+  if(all.length===0){
+    QS.forEach(q=>{el.innerHTML+=qCard(q);});
+  } else {
+    all.forEach(q=>{el.innerHTML+=qCard(q);});
+  }
+}
+
+function qCard(q){
+  const dc=q.diff==='easy'?'t-easy':q.diff==='med'?'t-med':'t-hard';
+  const dl=q.diff==='easy'?'سهل':q.diff==='med'?'متوسط':'صعب';
+  return `<div class="q-card${selQs.has(q.id)?' sel':''}" onclick="toggleQ(${q.id},this)">
+    <div class="q-chk">${selQs.has(q.id)?'✓':''}</div>
+    <div>
+      <div class="q-text">${q.text}</div>
+      <div class="tags">
+        <span class="tag ${dc}">${dl}</span>
+        <span class="tag t-type">${q.type}</span>
+        <span class="tag t-pts">${q.pts} نقطة</span>
       </div>
-    </div>`).join('');
+    </div>
+  </div>`;
 }
 
 function toggleQ(id,el){
   if(selQs.has(id)){selQs.delete(id);el.classList.remove('sel');el.querySelector('.q-chk').textContent='';}
   else{selQs.add(id);el.classList.add('sel');el.querySelector('.q-chk').textContent='✓';}
+  const n=selQs.size;
+  document.getElementById('q-count-badge').textContent=n>0?n+' أسئلة مختارة':'';
 }
 
-// ===== PREVIEW =====
+// BUILD PREVIEW
 function buildPreview(){
   const school=document.getElementById('isch').value||'الابتدائية النموذجية';
   const dist=document.getElementById('idis').value||'المقاطعة التربوية';
-  const yr=document.getElementById('sy').options[document.getElementById('sy').selectedIndex].text;
-  const subj=document.getElementById('ssub').options[document.getElementById('ssub').selectedIndex].text;
+  const yrEl=document.getElementById('sy');
+  const subEl=document.getElementById('ssub');
+  const yr=yrEl.options[yrEl.selectedIndex].text;
+  const sub=subEl.options[subEl.selectedIndex].text;
   const type=document.getElementById('stype').value;
   const unit=document.getElementById('sunit').value;
-  const all=[...QS,...aiQsAdded];
+  const all=[...QS,...aiQs];
   const qs=all.filter(q=>selQs.has(q.id));
   const total=qs.reduce((s,q)=>s+q.pts,0);
   const today=new Date().toLocaleDateString('ar-DZ');
-
   document.getElementById('preview-body').innerHTML=`
-    <div class="exam-header">
-      <div class="exam-school">
-        <div style="font-weight:700;color:var(--text);font-size:13px">${school}</div>
+    <div class="exam-hdr">
+      <div class="eh-cell">
+        <div style="font-weight:800;color:var(--text);font-size:13px">${school}</div>
         <div>${dist}</div>
-        <div>السنة: 2025/2026</div>
+        <div>السنة الدراسية: 2025/2026</div>
       </div>
-      <div class="exam-center">
+      <div class="eh-center">
         <div style="font-size:11px;color:var(--muted)">الجمهورية الجزائرية الديمقراطية الشعبية</div>
         <div style="font-size:11px;color:var(--muted)">وزارة التربية الوطنية</div>
-        <div class="exam-title-ar">${type} في ${subj}</div>
-        <div class="exam-subtitle">${unit}</div>
+        <div class="eh-title">${type} في ${sub}</div>
+        <div class="eh-sub">${unit}</div>
       </div>
-      <div class="exam-school" style="text-align:left">
-        <div style="font-weight:700;color:var(--text);font-size:13px">${yr}</div>
+      <div class="eh-cell" style="text-align:left">
+        <div style="font-weight:800;color:var(--text);font-size:13px">${yr}</div>
         <div>التاريخ: ${today}</div>
-        <div style="color:var(--g);font-weight:700">العلامة: ...../${total}</div>
+        <div style="color:var(--g);font-weight:800">العلامة: ...../${total}</div>
       </div>
     </div>
-    <div class="exam-meta-row">
-      <span>👤 الاسم واللقب: ........................................</span>
-      <span>🏫 القسم: ..........   الفوج: .........</span>
+    <div class="exam-info">
+      <span>👤 الاسم واللقب: .............................................</span>
+      <span>🏫 القسم: .......... الفوج: .........</span>
     </div>
     ${qs.map((q,i)=>`
       <div class="exam-q">
-        <div class="q-header">
-          <div class="q-num-circle">${i+1}</div>
-          <span style="font-size:13px;font-weight:700">التمرين ${i+1}</span>
-          <span style="font-size:11px;color:var(--muted)">(${q.pts} ${q.pts===1?'نقطة':'نقاط'})</span>
+        <div class="eq-head">
+          <div class="eq-num">${i+1}</div>
+          <span class="eq-label">التمرين ${i+1}</span>
+          <span class="eq-pts">(${q.pts} ${q.pts===1?'نقطة':'نقاط'})</span>
         </div>
-        <div style="font-size:13px;line-height:1.85;padding-right:28px">${q.text}</div>
-        <div class="answer-space"></div>
-      </div>
-    `).join('')}
-  `;
+        <div class="eq-text">${q.text}</div>
+        <div class="ans-lines"><div class="ans-line"></div><div class="ans-line"></div><div class="ans-line"></div></div>
+      </div>`).join('')}`;
 }
 
-// ===== PDF DOWNLOAD =====
+// PDF DOWNLOAD
 function downloadPDF(){
-  const all=[...QS,...aiQsAdded];
+  const all=[...QS,...aiQs];
   const qs=all.filter(q=>selQs.has(q.id));
-  if(qs.length===0){notify('⚠️ اختر أسئلة أولاً');return;}
-
+  if(!qs.length){toast('⚠️ اختر أسئلة أولاً');return;}
   const doc=new jsPDF({orientation:'p',unit:'mm',format:'a4'});
   const school=document.getElementById('isch').value||'الابتدائية النموذجية';
   const dist=document.getElementById('idis').value||'المقاطعة التربوية';
-  const yr=document.getElementById('sy').options[document.getElementById('sy').selectedIndex].text||'السنة الأولى';
-  const subj=document.getElementById('ssub').options[document.getElementById('ssub').selectedIndex].text||'اللغة العربية';
+  const yrEl=document.getElementById('sy');
+  const subEl=document.getElementById('ssub');
+  const yr=yrEl.options[yrEl.selectedIndex].text||'السنة الأولى';
+  const sub=subEl.options[subEl.selectedIndex].text||'اللغة العربية';
   const type=document.getElementById('stype').value||'فرض';
   const total=qs.reduce((s,q)=>s+q.pts,0);
   const today=new Date().toLocaleDateString('ar-DZ');
-
   doc.setFont('helvetica');
-  // Header box
-  doc.setFillColor(26,122,74);
-  doc.rect(0,0,210,22,'F');
-  doc.setTextColor(255,255,255);
-  doc.setFontSize(14);doc.setFont('helvetica','bold');
-  doc.text(type+' - '+subj,105,10,{align:'center'});
+  doc.setFillColor(22,163,74);doc.rect(0,0,210,24,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(14);doc.setFont('helvetica','bold');
+  doc.text(type+' — '+sub,105,11,{align:'center'});
   doc.setFontSize(9);doc.setFont('helvetica','normal');
-  doc.text(school+' | '+dist,105,16,{align:'center'});
-
-  // Info row
-  doc.setTextColor(80,80,80);doc.setFontSize(9);
-  doc.setDrawColor(26,122,74);doc.setLineWidth(0.3);
-  doc.rect(10,25,190,10);
-  doc.text('السنة: '+yr,195,31,{align:'right'});
-  doc.text('التاريخ: '+today,105,31,{align:'center'});
-  doc.text('العلامة: ...../' +total,15,31);
-
-  // Name row
-  doc.setFillColor(245,247,249);doc.rect(10,37,190,8,'F');
-  doc.setTextColor(50,50,50);
-  doc.text('الاسم واللقب: .............................................',195,42,{align:'right'});
-  doc.text('القسم: ..........  الفوج: ..........',15,42);
-
-  let y=52;
-  doc.setTextColor(30,30,30);
+  doc.text(school+' | '+dist,105,18,{align:'center'});
+  doc.setTextColor(60,60,60);doc.setFontSize(9);
+  doc.setDrawColor(22,163,74);doc.setLineWidth(0.3);
+  doc.rect(10,27,190,10);
+  doc.text('السنة: '+yr,195,33,{align:'right'});
+  doc.text('التاريخ: '+today,105,33,{align:'center'});
+  doc.text('العلامة: /'+total,15,33);
+  doc.setFillColor(248,250,252);doc.rect(10,39,190,8,'F');
+  doc.text('الاسم واللقب: .............................................',195,44,{align:'right'});
+  doc.text('القسم: ..........  الفوج: ..........',15,44);
+  let y=54;
+  doc.setTextColor(20,20,20);
   qs.forEach((q,i)=>{
     if(y>260){doc.addPage();y=15;}
-    // Question header
-    doc.setFillColor(232,245,238);doc.roundedRect(10,y,190,8,2,2,'F');
-    doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(26,122,74);
-    doc.text('التمرين '+(i+1)+' ('+q.pts+' نقطة)',195,y+5.5,{align:'right'});
-    y+=11;
-    // Question text — wrap manually
-    doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(30,30,30);
+    doc.setFillColor(240,253,244);doc.roundedRect(10,y,190,8,2,2,'F');
+    doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(22,163,74);
+    doc.text('التمرين '+(i+1)+' ('+q.pts+' نقطة)',195,y+5.5,{align:'right'});y+=11;
+    doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(20,20,20);
     const lines=doc.splitTextToSize(q.text,180);
-    lines.forEach(l=>{
-      if(y>265){doc.addPage();y=15;}
-      doc.text(l,195,y,{align:'right'});y+=6;
-    });
-    // Answer lines
+    lines.forEach(l=>{if(y>265){doc.addPage();y=15;}doc.text(l,195,y,{align:'right'});y+=6;});
     doc.setDrawColor(200,200,200);doc.setLineWidth(0.2);
-    for(let r=0;r<3;r++){
-      if(y>268){doc.addPage();y=15;}
-      doc.line(10,y+5,200,y+5);y+=8;
-    }
+    for(let r=0;r<3;r++){if(y>268){doc.addPage();y=15;}doc.line(10,y+5,200,y+5);y+=8;}
     y+=4;
   });
-
-  // Footer
-  doc.setFontSize(7);doc.setTextColor(150,150,150);
-  doc.text('نجوم الجزائر — منصة الطور الابتدائي',105,290,{align:'center'});
-
-  doc.save(type+'_'+subj+'_'+yr+'.pdf');
-  notify('✅ تم تحميل PDF بنجاح!');
+  doc.setFontSize(7);doc.setTextColor(160,160,160);
+  doc.text('نجوم الجزائر — منصة الطور الابتدائي | 2025',105,290,{align:'center'});
+  doc.save(type+'_'+sub+'_'+yr+'.pdf');
+  toast('✅ تم تحميل PDF بنجاح!');
 }
 
-// ===== AI QUESTIONS GENERATOR =====
-async function genAIQuestions(){
-  const subj=document.getElementById('ssub').options[document.getElementById('ssub').selectedIndex].text;
-  const yr=document.getElementById('sy').options[document.getElementById('sy').selectedIndex].text;
+// AI QUESTIONS GENERATOR
+async function genAI(){
+  const subEl=document.getElementById('ssub');
+  const yrEl=document.getElementById('sy');
+  const sub=subEl.options[subEl.selectedIndex].text;
+  const yr=yrEl.options[yrEl.selectedIndex].text;
   const unit=document.getElementById('sunit').value;
-  notify('🤖 جارٍ توليد الأسئلة بالذكاء الاصطناعي...');
-  const btn=document.querySelector('#st2 button');
+  const btn=document.getElementById('ai-gen-btn');
   btn.disabled=true;btn.textContent='⏳ جارٍ التوليد...';
+  toast('🤖 جارٍ توليد الأسئلة...');
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        messages:[{role:'user',content:`أنت خبير في المناهج الجزائرية للطور الابتدائي.
-أنشئ بالضبط 4 أسئلة تعليمية للمادة: ${subj}، السنة: ${yr}، ${unit}.
-أجب فقط بـ JSON صالح بهذا الشكل بدون أي نص آخر:
-[{"text":"نص السؤال","diff":"easy","type":"نوع","pts":2},...]
-الأنواع: تكملة، وصل، اختيار، مسألة، تعبير. diff: easy/med/hard. pts: 1-6.`}]
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        messages:[{role:'user',content:`أنت خبير في المناهج الجزائرية للطور الابتدائي. أنشئ بالضبط 4 أسئلة تعليمية متنوعة للمادة: ${sub}، السنة: ${yr}، ${unit}. أجب فقط بـ JSON صالح بدون أي نص آخر ولا backticks:\n[{"text":"نص السؤال","diff":"easy","type":"نوع","pts":2},...]\nالأنواع: تكملة، وصل، اختيار، مسألة، تعبير. diff: easy/med/hard. pts: 1-6.`}]
       })
     });
     const data=await res.json();
     const txt=data.content.map(c=>c.text||'').join('');
     const clean=txt.replace(/```json|```/g,'').trim();
     const parsed=JSON.parse(clean);
-    aiQsAdded=parsed.map((q,i)=>({...q,id:1000+i,subj:'ai'}));
+    aiQs=parsed.map((q,i)=>({...q,id:1000+i,subj:'ai'}));
     renderQlist();
-    notify('✅ تم توليد '+aiQsAdded.length+' أسئلة بنجاح!');
+    toast('✅ تم توليد '+aiQs.length+' أسئلة!');
   }catch(e){
-    notify('⚠️ تعذّر الاتصال بالذكاء الاصطناعي');
-    // Fallback demo questions
-    aiQsAdded=[
+    aiQs=[
       {id:1001,text:'[AI] استخرج من النص الأسماء والأفعال وضعها في جدول',diff:'med',type:'تحليل',pts:4,subj:'ai'},
-      {id:1002,text:'[AI] اكتب جملة مفيدة تصف الفصل الذي تحب',diff:'easy',type:'تعبير',pts:2,subj:'ai'},
+      {id:1002,text:'[AI] اكتب جملة مفيدة تصف المكان الذي تحب',diff:'easy',type:'تعبير',pts:2,subj:'ai'},
     ];
     renderQlist();
-    notify('تم استخدام أسئلة تجريبية');
+    toast('⚠️ تم استخدام أسئلة نموذجية');
   }
-  btn.disabled=false;btn.innerHTML='<span>🤖</span> توليد أسئلة بالذكاء الاصطناعي';
+  btn.disabled=false;btn.innerHTML='🤖 توليد أسئلة بالذكاء الاصطناعي';
 }
 
-// ===== AI CHAT =====
-async function sendChat(inputId,msgsId,btnId){
-  const inp=document.getElementById(inputId);
-  const msgs=document.getElementById(msgsId);
-  const btn=document.getElementById(btnId);
-  const txt=inp.value.trim();
-  if(!txt)return;
+// AI CHAT
+async function chatSend(inpId,msgsId,btnId,sys){
+  const inp=document.getElementById(inpId),msgs=document.getElementById(msgsId),btn=document.getElementById(btnId);
+  const txt=inp.value.trim();if(!txt)return;
   inp.value='';btn.disabled=true;
-  msgs.innerHTML+=`<div class="msg msg-user">${txt}</div>`;
-  const loader=document.createElement('div');
-  loader.className='msg msg-loading';
-  loader.innerHTML='<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
-  msgs.appendChild(loader);
-  msgs.scrollTop=msgs.scrollHeight;
+  msgs.innerHTML+=`<div class="m m-user">${txt}</div>`;
+  const ld=document.createElement('div');ld.className='m m-loading';
+  ld.innerHTML='<div class="ld"></div><div class="ld"></div><div class="ld"></div>';
+  msgs.appendChild(ld);msgs.scrollTop=msgs.scrollHeight;
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        messages:[{role:'user',content:`أنت مساعد تربوي متخصص في المناهج الجزائرية للطور الابتدائي. أجب بالعربية بأسلوب واضح ومختصر مناسب للمعلم. السؤال: ${txt}`}]
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        messages:[{role:'user',content:sys+'\n\nالسؤال: '+txt}]
       })
     });
     const data=await res.json();
     const reply=data.content.map(c=>c.text||'').join('')||'عذراً، لم أتمكن من الإجابة.';
-    loader.remove();
-    msgs.innerHTML+=`<div class="msg msg-ai">${reply.replace(/\n/g,'<br>')}</div>`;
+    ld.remove();
+    msgs.innerHTML+=`<div class="m m-ai">${reply.replace(/\n/g,'<br>')}</div>`;
   }catch(e){
-    loader.remove();
-    msgs.innerHTML+=`<div class="msg msg-ai">⚠️ تعذّر الاتصال. تحقق من الاتصال بالإنترنت وأعد المحاولة.</div>`;
+    ld.remove();msgs.innerHTML+=`<div class="m m-ai">⚠️ تعذّر الاتصال. تحقق من الاتصال وأعد المحاولة.</div>`;
   }
   btn.disabled=false;msgs.scrollTop=msgs.scrollHeight;
 }
 
-function sendMini(){sendChat('mini-inp','mini-msgs','mini-btn');}
-function sendMain(){sendChat('main-inp','main-msgs','main-btn');}
+const SYS='أنت مساعد تربوي متخصص في المناهج الجزائرية للطور الابتدائي. أجب بالعربية بأسلوب واضح ومختصر مناسب للمعلم الجزائري.';
+function sendMini(){chatSend('mini-inp','mini-msgs','mini-btn',SYS);}
+function sendMain(){chatSend('main-inp','main-msgs','main-btn',SYS);}
 function quickAsk(q){document.getElementById('main-inp').value=q;sendMain();}
-function clearChat(){document.getElementById('main-msgs').innerHTML='<div class="msg msg-ai">تمت مسح المحادثة. كيف يمكنني مساعدتك؟ 📚</div>';}
+function clearChat(){document.getElementById('main-msgs').innerHTML='<div class="m m-ai">تمت مسح المحادثة. كيف يمكنني مساعدتك؟ 📚</div>';}
 
-// ===== LIBRARY =====
+// LIBRARY
 function renderLib(){renderLibFiltered(DOCS);}
 function setTab(t,el){
   curTab=t;
-  document.querySelectorAll('.ftab').forEach(e=>e.classList.remove('active'));
-  el.classList.add('active');
-  filterLib();
+  document.querySelectorAll('.filter-chip').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');filterLib();
 }
 function filterLib(){
-  const q=document.getElementById('search-inp').value.toLowerCase();
-  const filtered=DOCS.filter(d=>(curTab==='all'||d.subj===curTab)&&(d.name.toLowerCase().includes(q)||d.year.toLowerCase().includes(q)));
-  renderLibFiltered(filtered);
+  const q=(document.getElementById('search-inp')?.value||'').toLowerCase();
+  renderLibFiltered(DOCS.filter(d=>(curTab==='all'||d.subj===curTab)&&(d.name.toLowerCase().includes(q)||d.year.includes(q))));
 }
 function renderLibFiltered(list){
-  document.getElementById('doc-grid').innerHTML=list.length===0
-    ?'<p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:3rem;font-size:14px">لا توجد وثائق مطابقة للبحث</p>'
-    :list.map((d,i)=>`
-    <div class="doc-card" onclick="openDoc(${DOCS.indexOf(d)})">
-      <div class="doc-thumb" style="background:${d.color}">
-        ${d.icon}
-        <span class="doc-type-badge" style="background:var(--g);color:#fff">${d.type}</span>
-      </div>
+  document.getElementById('doc-grid').innerHTML=list.length?list.map((d,i)=>`
+    <div class="doc-card">
+      <div class="doc-thumb" style="background:${d.bg}">${d.icon}<span class="doc-type">${d.type}</span></div>
       <div class="doc-info">
         <div class="doc-name">${d.name}</div>
         <div class="doc-meta">${d.year}</div>
-        <div class="doc-actions">
-          <button class="btn-sm btn-dl" onclick="event.stopPropagation();dlDoc('${d.name}')">⬇️ تحميل</button>
-          <button class="btn-sm btn-view" onclick="event.stopPropagation();prevDoc(${DOCS.indexOf(d)})">👁️ معاينة</button>
+        <div class="doc-btns">
+          <button class="d-btn d-dl" onclick="dlDoc('${d.name}')">⬇️ تحميل</button>
+          <button class="d-btn d-view" onclick="previewDoc(${DOCS.indexOf(d)})">👁️ معاينة</button>
         </div>
       </div>
-    </div>`).join('');
+    </div>`).join('')
+    :'<p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:3rem;font-size:13px">لا توجد وثائق مطابقة</p>';
 }
 
-function openDoc(i){
-  const d=DOCS[i];
-  showPage('generator');
-  setTimeout(()=>{
-    const smap={'arabic':'arabic','math':'math','french':'french','islamic':'islamic','civic':'civic','science':'science'};
-    const ymap={'السنة الأولى ابتدائي':'1','السنة الثانية ابتدائي':'2','السنة الثالثة ابتدائي':'3','السنة الرابعة ابتدائي':'4','السنة الخامسة ابتدائي':'5'};
-    const sy=document.getElementById('sy');
-    const ss=document.getElementById('ssub');
-    [...sy.options].forEach(o=>{if(o.value===ymap[d.year])sy.value=o.value;});
-    [...ss.options].forEach(o=>{if(o.value===smap[d.subj])ss.value=o.value;});
-    notify('📂 تم تحميل بيانات: '+d.name);
-  },100);
-}
-
-function prevDoc(i){
+function previewDoc(i){
   const d=DOCS[i];
   const bg=document.createElement('div');
   bg.className='modal-bg';
   bg.innerHTML=`<div class="modal">
-    <button class="modal-close" onclick="this.closest('.modal-bg').remove()">✕</button>
-    <div style="border-bottom:3px solid var(--g);padding-bottom:1rem;margin-bottom:1.2rem;text-align:center">
-      <div style="font-size:12px;color:var(--muted)">الجمهورية الجزائرية الديمقراطية الشعبية</div>
-      <div style="font-size:18px;font-weight:800;color:var(--g);margin:.3rem 0">${d.name}</div>
+    <div class="modal-x" onclick="this.closest('.modal-bg').remove()">✕</div>
+    <div style="border-bottom:2px solid var(--g);padding-bottom:1rem;margin-bottom:1rem;text-align:center">
+      <div style="font-size:11px;color:var(--muted)">الجمهورية الجزائرية الديمقراطية الشعبية</div>
+      <div style="font-size:17px;font-weight:800;color:var(--g);margin:.3rem 0">${d.name}</div>
       <div style="font-size:12px;color:var(--muted)">${d.year}</div>
     </div>
-    <div style="display:flex;gap:1.5rem;justify-content:center;font-size:12px;color:var(--muted);background:var(--bg);padding:.6rem;border-radius:var(--rs);margin-bottom:1.2rem;flex-wrap:wrap">
+    <div style="display:flex;gap:1rem;justify-content:center;font-size:11px;color:var(--muted);background:var(--bg);padding:.6rem;border-radius:var(--rs);margin-bottom:1rem;flex-wrap:wrap">
       <span>📅 التاريخ: .../.../2026</span>
-      <span>👤 الاسم واللقب: ........................</span>
+      <span>👤 الاسم: ........................</span>
       <span>🏫 الفوج: .....</span>
     </div>
     ${QS.slice(0,3).map((q,i)=>`
-      <div style="margin-bottom:1.1rem;padding-bottom:1.1rem;border-bottom:1px dashed var(--border)">
+      <div style="margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px dashed var(--border)">
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:.4rem">
           <div style="width:20px;height:20px;border-radius:50%;background:var(--g);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">${i+1}</div>
           <span style="font-size:12px;font-weight:700">التمرين ${i+1}</span>
           <span style="font-size:11px;color:var(--muted)">(${q.pts} نقطة)</span>
         </div>
-        <div style="font-size:13px;line-height:1.8;padding-right:26px">${q.text}</div>
-        <div style="border:1px dashed var(--border);border-radius:6px;height:44px;margin-top:.5rem"></div>
-      </div>
-    `).join('')}
-    <div style="text-align:center;margin-top:.5rem">
-      <button onclick="dlDoc('${d.name}');this.closest('.modal-bg').remove()" style="background:var(--g);color:#fff;padding:11px 28px;border-radius:var(--rs);font-size:14px;font-weight:700;border:none;cursor:pointer;font-family:'Cairo',sans-serif">⬇️ تحميل PDF</button>
+        <div style="font-size:12.5px;line-height:1.8;padding-right:26px">${q.text}</div>
+      </div>`).join('')}
+    <div style="text-align:center;margin-top:1rem">
+      <button onclick="dlDoc('${d.name}');this.closest('.modal-bg').remove()" style="background:var(--g);color:#fff;padding:10px 26px;border-radius:var(--rs);font-size:13px;font-weight:700;border:none;cursor:pointer;font-family:'Cairo',sans-serif">⬇️ تحميل PDF</button>
     </div>
   </div>`;
   document.body.appendChild(bg);
   bg.addEventListener('click',e=>{if(e.target===bg)bg.remove();});
 }
 
-function dlDoc(name){
-  notify('⬇️ جارٍ تحضير: '+name);
-  setTimeout(()=>notify('✅ جاهز للتحميل!'),1500);
-}
+function dlDoc(name){toast('⬇️ جارٍ تحضير: '+name);setTimeout(()=>toast('✅ جاهز!'),1500);}
 
-// ===== NOTIFY =====
-function notify(msg){
-  const n=document.getElementById('notif');
+// TOAST
+function toast(msg){
+  const n=document.getElementById('toast');
   n.textContent=msg;n.classList.add('show');
   clearTimeout(n._t);n._t=setTimeout(()=>n.classList.remove('show'),2800);
 }
 
-// Init
+// INIT
 renderLib();
+renderRecent();
 </script>
 </body>
 </html>
